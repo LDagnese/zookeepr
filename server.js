@@ -9,6 +9,8 @@ const path = require("path");
 app.use(express.urlencoded({ extended: true }));
 // parse incoming JSON data
 app.use(express.json());
+// add ability to server static files
+app.use(express.static("public"));
 
 // filters the animal object array based on req.query object
 function filterByQuery(query, animalsArray) {
@@ -39,6 +41,7 @@ function filterByQuery(query, animalsArray) {
   }
   return filteredResults;
 }
+
 function findById(id, animalsArray) {
   const result = animalsArray.filter((animal) => animal.id === id)[0];
   return result;
@@ -103,6 +106,24 @@ app.post("/api/animals", (req, res) => {
     res.json(animal);
   }
 });
+
+// Serves pages
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "./public/index.html"));
+});
+
+app.get("/animals", (req, res) => {
+  res.sendFile(path.join(__dirname, "./public/animals.html"));
+});
+
+app.get("/zookeepers", (req, res) => {
+  res.sendFile(path.join(__dirname, "./public/zookeepers.html"));
+});
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "./public/index.html"));
+});
+
 
 app.listen(PORT, () => {
   console.log(`API server is now on port ${PORT}!`);
